@@ -7,39 +7,33 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.Button
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
-import androidx.navigation.NavType
-import androidx.navigation.compose.*
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigate
+import androidx.navigation.compose.rememberNavController
 import com.example.myapplication_c.components.InputFeilds
 import com.example.myapplication_c.ui.theme.MyTheme
-import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -92,23 +86,43 @@ Spacer(Modifier.size(50.dp))
 }}
 
 
+class loginviewmodel(){
+    fun login(context: Context,navController: NavController,email:String,password:String){
+        if(email == ""  || password == ""){
+            Log.d("hi",email)
+            Toast.makeText(context,"enter valid username and password",Toast.LENGTH_SHORT).show()
+        }
+        else{
+            Toast.makeText(context, "click    $email + $password", Toast.LENGTH_SHORT).show()
+            navController.navigate("aterlogin")
+
+
+        }
+    }
+}
+
+
+
+
 @Composable
 fun Login(navController: NavController){
     val context = LocalContext.current
+    var password by remember { mutableStateOf("")}
+    var email by remember { mutableStateOf("")}
     Surface() {
 
         Column(horizontalAlignment = Alignment.CenterHorizontally,modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(),verticalArrangement = Arrangement.Center) {
             Text(text = "Login",fontSize = 30.sp,modifier = Modifier)
-        var email by remember { mutableStateOf("")}
+
         InputFeilds().OutlinedInputField(text = email,onchange = {email = it},labeltext = "Email id",keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email))
-            var password by remember { mutableStateOf("")}
+
         InputFeilds().OutlinedInputField(text = password,onchange = {password = it},labeltext = "Password",keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password,imeAction = ImeAction.Done),visualTransformation = PasswordVisualTransformation())
             Spacer(Modifier.size(20.dp))
             Row(horizontalArrangement = Arrangement.Center,modifier = Modifier.fillMaxWidth()) {
                 Button(
-                    onClick = { Log.d("email",email); Log.d("email",password); login(context,navController,email,password)}, shape = RoundedCornerShape(10.dp), modifier = Modifier
+                    onClick = {loginviewmodel().login(context,navController,email,password)}, shape = RoundedCornerShape(10.dp), modifier = Modifier
                         .width(100.dp)
                         .height(45.dp)
                 ) {
@@ -120,17 +134,9 @@ fun Login(navController: NavController){
 }
 }
 
-fun login(context: Context,navController: NavController,email:String,password:String){
-    if(email.toString() == ""  || password.toString() == ""){
-        Toast.makeText(context,"enter valid username and password",Toast.LENGTH_SHORT).show()
-    }
-    else {
-        Toast.makeText(context, "click    $email + $password", Toast.LENGTH_SHORT).show();
-        navController.navigate("aterlogin")
-    }
 
 
-}
+
 
 
 

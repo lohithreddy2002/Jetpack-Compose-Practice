@@ -63,12 +63,9 @@ class InputFeilds{
         visualTransformation: VisualTransformation = VisualTransformation.None,
 
         ) {
-        var text by remember { mutableStateOf("") }
             OutlinedTextField(
                 value = text,
-                onValueChange = { it ->
-                    text = it
-                },
+                onValueChange = onchange,
                 label  = { Text(text = labeltext) },
                 modifier = Modifier
                     .padding(10.dp)
