@@ -10,12 +10,13 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 
 
-class buttons{
+class InputFeilds{
 
     @Composable
     fun FilledInputField(
@@ -57,10 +58,11 @@ class buttons{
         onchange:(String)->Unit,
         round: Int = 0,
         labeltext: String = "",
-        keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+        keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text,imeAction = ImeAction.Next),
         colors: TextFieldColors = TextFieldDefaults.outlinedTextFieldColors(),
-        visualTransformation: VisualTransformation = VisualTransformation.None
-    ) {
+        visualTransformation: VisualTransformation = VisualTransformation.None,
+
+        ) {
         var text by remember { mutableStateOf("") }
             OutlinedTextField(
                 value = text,

@@ -1,5 +1,7 @@
 package com.example.myapplication_c
 
+import android.view.animation.Animation
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -26,7 +28,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
 import androidx.navigation.compose.rememberNavController
-import com.example.myapplication_c.components.buttons
+import com.example.myapplication_c.components.InputFeilds
 import com.example.myapplication_c.ui.theme.MyTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -54,8 +56,10 @@ fun HomeScreen(title:String,desc:String,navController: NavController){
     }
         Column(verticalArrangement = Arrangement.Bottom,modifier = Modifier.fillMaxSize()) {
             var text by rememberSaveable{mutableStateOf("")}
-            buttons().FilledInputField(labeltext = "enter email",text = text,onchange = {text = it})
-            Button(onClick = {navController.navigate("movie/$text")}) {
+            InputFeilds().FilledInputField(labeltext = "enter email",text = text,onchange = {text = it})
+            Button(onClick = {
+
+                navController.navigate("movie/$text")}) {
                 Text("submit")
             }
         }
@@ -64,7 +68,6 @@ fun HomeScreen(title:String,desc:String,navController: NavController){
 
 )
 }
-
 
 
 
@@ -153,7 +156,7 @@ fun card(title:String,descripton:String,navController: NavController){
     Card(
         Modifier
             .fillMaxWidth()
-            .height(240.dp)
+            .fillMaxHeight(0.3f)
             .clickable { navController.navigate("greet") },backgroundColor = Color.LightGray,elevation = 30.dp,shape = RoundedCornerShape(20.dp)){
         Image(painter = painterResource(id =R.drawable.pp), contentDescription = "image",contentScale = ContentScale.Crop)
         Column(Modifier.padding(20.dp),verticalArrangement = Arrangement.Bottom) {
@@ -165,23 +168,23 @@ fun card(title:String,descripton:String,navController: NavController){
 
 
 
-@Preview
-@Composable
-fun Preview () {
-    val nav_ = rememberNavController()
-    MyTheme(darkTheme = true) {
-        HomeScreen("Movie name","Raitng",nav_)
-
-    }
-
-}
-@Preview
-@Composable
-fun Preview2 () {
-    val nav_ = rememberNavController()
-    MyTheme() {
-        HomeScreen("Movie name","Raitng",nav_)
-
-    }
-
-}
+//@Preview
+//@Composable
+//fun Preview () {
+//    val nav_ = rememberNavController()
+//    MyTheme(darkTheme = true) {
+//        HomeScreen("Movie name","Raitng",nav_)
+//
+//    }
+//
+//}
+//@Preview
+//@Composable
+//fun Preview2 () {
+//    val nav_ = rememberNavController()
+//    MyTheme() {
+//        HomeScreen("Movie name","Raitng",nav_)
+//
+//    }
+//
+//}
