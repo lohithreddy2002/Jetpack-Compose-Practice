@@ -19,7 +19,7 @@ import androidx.navigation.compose.navigate
 
 
 @Composable
-fun Home(navController: NavController){
+fun Welcome(navController: NavController){
     Surface{
         Column(modifier = Modifier.fillMaxSize(),verticalArrangement = Arrangement.Center,horizontalAlignment = Alignment.CenterHorizontally) {
             Image(painter = painterResource(id = R.drawable.logo), contentDescription = "Logo",modifier = Modifier

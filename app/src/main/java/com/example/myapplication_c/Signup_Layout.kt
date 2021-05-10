@@ -28,7 +28,7 @@ fun Signup(navController: NavController){
         Column(horizontalAlignment = Alignment.CenterHorizontally,modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(),verticalArrangement = Arrangement.Center) {
-            Text(text = "Login",fontSize = 30.sp,modifier = Modifier)
+            Text(text = "Signup",fontSize = 30.sp,modifier = Modifier)
 
             InputFeilds().OutlinedInputField(text = email,onchange = {email = it},labeltext = "Email id",keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email))
 
@@ -40,7 +40,7 @@ fun Signup(navController: NavController){
                         .width(100.dp)
                         .height(45.dp)
                 ) {
-                    Text("Login",fontSize = 20.sp)
+                    Text("Signup",fontSize = 20.sp)
                 }
             }
 

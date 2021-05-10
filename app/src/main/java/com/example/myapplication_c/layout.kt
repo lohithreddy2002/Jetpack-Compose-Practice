@@ -33,6 +33,9 @@ import com.example.myapplication_c.ui.theme.MyTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+/*
+* Practice Layout
+ */
 
 @Composable
 fun HomeScreen(title:String,desc:String,navController: NavController){
