@@ -1,5 +1,4 @@
 package com.example.myapplication_c
-import androidx.compose.foundation.lazy.items
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -7,10 +6,12 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -19,23 +20,26 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.navigate
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavType
+import androidx.navigation.compose.*
 import com.example.myapplication_c.ui.theme.MyTheme
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 lateinit var firebase:Firebase
 class MainActivity : ComponentActivity() {
@@ -43,37 +47,43 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         firebase = Firebase
-        var start:String
+        var start: String
         super.onCreate(savedInstanceState)
-        if(firebase.auth.currentUser != null){
+        if (firebase.auth.currentUser != null) {
             start = "aterlogin"
-        }
-        else{
+        } else {
             start = "home"
         }
 
         setContent {
             val nav = rememberNavController()
 
-            NavHost(navController = nav, startDestination = start ){
-                composable("home"){
+            NavHost(navController = nav, startDestination = start) {
+                composable("home") {
                     Welcome(nav)
                 }
-                composable("login"){
-                   Login(nav)
+                composable("login") {
+                    Login(nav)
                 }
-                composable("aterlogin"){
-                    Home(Homeview(repo = Repo()))
+                composable("aterlogin") {
+                    Home(Homeview(repo = Repo()),nav)
                 }
-                composable("signup"){
+                composable("signup") {
                     Signup(nav)
                 }
+                composable("item/{id}", listOf(navArgument("id") { type = NavType.IntType })) {
+                    it.arguments?.getInt("id").let {
+                        if(it!=null){
+                        aftercard(id = it)
+                    }}
 
-            }
+
+                }
+
             }
         }
     }
-
+}
 
 
 
@@ -133,7 +143,10 @@ fun signup(context: Context,navController: NavController,email: String,password:
 
 
 @Composable
-fun Home(viewmodel:Homeview){
+fun Home(viewmodel:Homeview,navController: NavController){
+    val scaffold = rememberScaffoldState()
+    val coroutine = rememberCoroutineScope()
+    val context= LocalContext.current
    val items by viewmodel.items.observeAsState(listOf())
 
     Scaffold(
@@ -162,9 +175,9 @@ fun Home(viewmodel:Homeview){
         )
         },
         content = {
-            LazyColumn(horizontalAlignment = Alignment.CenterHorizontally) {
+            LazyColumn(horizontalAlignment = Alignment.CenterHorizontally,contentPadding = PaddingValues(bottom = 40.dp)) {
                 items(items){data->
-itemcard(data.item_name)
+itemcard(data,navController,scaffold,coroutine,context)
                 }
 
 
@@ -176,61 +189,158 @@ itemcard(data.item_name)
 }
 
 @Composable
-fun itemcard(name:String){
+fun itemcard(item:allitems,navController: NavController,scaffoldState: ScaffoldState,coroutine:CoroutineScope,context: Context){
     //Surface( modifier = Modifier.fillMaxSize()) {
     Surface(elevation = 10.dp){
-        Card(content = {
-            Row(horizontalArrangement = Arrangement.SpaceBetween,verticalAlignment = Alignment.CenterVertically) {
-                Column() {
-                    Text(text = name)
+        Card(
+            content = {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column() {
+                        Text(text = item.item_name)
+                    }
+                    Box(
+                        modifier = Modifier
+                            .padding(20.dp)
+                            .clip(shape = RoundedCornerShape(20.dp))
+                    ) {
+                        Image(
+                            painterResource(id = R.drawable.p),
+                            contentDescription = "image",
+                            modifier = Modifier.size(130.dp)
+                        )
+
+                        OutlinedButton(
+                            onClick = {
+                                coroutine.launch {
+                                    Toast.makeText(
+                                        context,
+                                        item.item_name,
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }, modifier = Modifier
+                                .absoluteOffset(x = 66.dp, y = 90.dp)
+                                .size(width = 60.dp, height = 30.dp)
+                                .background(
+                                    Color.Transparent
+                                )
+                                .clip(RoundedCornerShape(14.dp))
+                        ) {
+                            Text(text = "Add", fontSize = 10.sp)
+                        }
+
+                    }
                 }
-                Image(painterResource(id = R.drawable.p), contentDescription = "image",modifier = Modifier.size(130.dp))
-
-
-
-            }
-        },modifier = Modifier
-            .padding(20.dp)
-            .border(
-                1.5.dp, shape = RoundedCornerShape(10.dp), brush = Brush.linearGradient(
-                    colors = listOf(
-                        Color.Red, Color.White, Color.Yellow
+            },
+            modifier = Modifier
+                .padding(20.dp)
+                .border(
+                    1.5.dp, shape = RoundedCornerShape(10.dp), brush = Brush.linearGradient(
+                        colors = listOf(
+                            Color.Red, Color.White, Color.Yellow
+                        )
                     )
                 )
-            )
-            .clickable { }
-            .fillMaxWidth(),
-        elevation = 100.dp,
+                .clickable(onClick = { navController.navigate("item/${item.id}") })
+                .fillMaxWidth(),
+            elevation = 100.dp,
             shape = RoundedCornerShape(8.dp),
 
 
-        )
-    //}
-}}
+            )
+    }
+}
+
+
+
+@Composable
+fun aftercard(id: Int) {
+    Text(text = "$id")
+}
 
 
 
 
+@Composable
+fun itemcard1()
+{
+    Surface(elevation = 10.dp){
+        Card(
+            content = {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column() {
+                        Text(text = "1")
+                    }
+                    Box(modifier = Modifier
+                        .padding(20.dp)
+                        .clip(shape = RoundedCornerShape(20.dp))) {
+                        Image(
+                            painterResource(id = R.drawable.p),
+                            contentDescription = "image",
+                            modifier = Modifier.size(130.dp)
+                        )
 
-//@Preview
-//@Composable
-//fun Preview () {
-//    val nav_ = rememberNavController()
-//    MyTheme(darkTheme = true) {
-//Home()
-//    }
-//
-//}
-//@Preview
-//@Composable
-//fun Preview2 () {
-//    val nav_ = rememberNavController()
-//    MyTheme {
-//      Home()
-//
-//    }
-//
-//}
+                        OutlinedButton(onClick = { /*TODO*/ },modifier = Modifier
+                            .absoluteOffset(x = 66.dp, y = 90.dp)
+                            .size(width = 60.dp, height = 30.dp)
+                            .background(
+                                Color.Transparent
+                            )
+                            .clip(RoundedCornerShape(14.dp))) {
+                            Text(text = "Add",fontSize = 10.sp)
+                        }
+                    }
+                    
+
+
+                }
+            },
+            modifier = Modifier
+                .padding(20.dp)
+                .border(
+                    1.5.dp, shape = RoundedCornerShape(10.dp), brush = Brush.linearGradient(
+                        colors = listOf(
+                            Color.Red, Color.White, Color.Yellow
+                        )
+                    )
+                )
+                .clickable(onClick = { /*navController.navigate("item/${item.id}")*/ })
+                .fillMaxWidth(),
+            elevation = 100.dp,
+            shape = RoundedCornerShape(8.dp),
+
+
+            )
+    }
+}
+
+
+@Preview
+@Composable
+fun Preview () {
+    val nav_ = rememberNavController()
+    MyTheme(darkTheme = true) {
+
+itemcard1()
+    }
+
+}
+@Preview
+@Composable
+fun Preview2 () {
+    val nav_ = rememberNavController()
+    MyTheme {
+        itemcard1()
+
+    }
+
+}
 
 
 
