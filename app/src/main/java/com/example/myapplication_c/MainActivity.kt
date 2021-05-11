@@ -17,6 +17,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -25,6 +27,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -60,7 +63,7 @@ class MainActivity : ComponentActivity() {
                    Login(nav)
                 }
                 composable("aterlogin"){
-                    Home()
+                    Home(Homeview(repo = Repo()))
                 }
                 composable("signup"){
                     Signup(nav)
@@ -70,6 +73,15 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+
+
+
+
+
+
+
+
 
 fun login(context: Context,navController: NavController,email:String,password:String){
         if(email == ""  || password == ""){
@@ -88,6 +100,12 @@ fun login(context: Context,navController: NavController,email:String,password:St
             }
         }
     }
+
+
+
+
+
+
 
 
 
@@ -111,11 +129,13 @@ fun signup(context: Context,navController: NavController,email: String,password:
 
 }
 
-val itemcardlist = listOf<String>("1","2","3","4","5")
+
 
 
 @Composable
-fun Home(){
+fun Home(viewmodel:Homeview){
+   val items by viewmodel.items.observeAsState(listOf())
+
     Scaffold(
 
         topBar = { TopAppBar(title = { Text(text = "Welcome",fontSize = 30.sp) } ,actions = {
@@ -143,8 +163,8 @@ fun Home(){
         },
         content = {
             LazyColumn(horizontalAlignment = Alignment.CenterHorizontally) {
-                items(itemcardlist){
-itemcard()
+                items(items){data->
+itemcard(data.item_name)
                 }
 
 
@@ -156,13 +176,13 @@ itemcard()
 }
 
 @Composable
-fun itemcard(){
+fun itemcard(name:String){
     //Surface( modifier = Modifier.fillMaxSize()) {
     Surface(elevation = 10.dp){
         Card(content = {
             Row(horizontalArrangement = Arrangement.SpaceBetween,verticalAlignment = Alignment.CenterVertically) {
                 Column() {
-                    Text(text = "Hai")
+                    Text(text = name)
                 }
                 Image(painterResource(id = R.drawable.p), contentDescription = "image",modifier = Modifier.size(130.dp))
 
@@ -177,7 +197,9 @@ fun itemcard(){
                         Color.Red, Color.White, Color.Yellow
                     )
                 )
-            ).clickable {  }.fillMaxWidth(),
+            )
+            .clickable { }
+            .fillMaxWidth(),
         elevation = 100.dp,
             shape = RoundedCornerShape(8.dp),
 
@@ -190,25 +212,25 @@ fun itemcard(){
 
 
 
-@Preview
-@Composable
-fun Preview () {
-    val nav_ = rememberNavController()
-    MyTheme(darkTheme = true) {
-Home()
-    }
-
-}
-@Preview
-@Composable
-fun Preview2 () {
-    val nav_ = rememberNavController()
-    MyTheme {
-      Home()
-
-    }
-
-}
+//@Preview
+//@Composable
+//fun Preview () {
+//    val nav_ = rememberNavController()
+//    MyTheme(darkTheme = true) {
+//Home()
+//    }
+//
+//}
+//@Preview
+//@Composable
+//fun Preview2 () {
+//    val nav_ = rememberNavController()
+//    MyTheme {
+//      Home()
+//
+//    }
+//
+//}
 
 
 
