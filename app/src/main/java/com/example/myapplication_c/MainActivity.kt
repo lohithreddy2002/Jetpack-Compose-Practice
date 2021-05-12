@@ -55,6 +55,7 @@ class MainActivity : ComponentActivity() {
             start = "home"
         }
 
+
         setContent {
             val nav = rememberNavController()
 
@@ -66,7 +67,8 @@ class MainActivity : ComponentActivity() {
                     Login(nav)
                 }
                 composable("aterlogin") {
-                    Home(Homeview(repo = Repo()),nav)
+                    val database = database(context = LocalContext.current)
+                    Home(Homeview(repo = Repo(database)),nav)
                 }
                 composable("signup") {
                     Signup(nav)
@@ -177,7 +179,7 @@ fun Home(viewmodel:Homeview,navController: NavController){
         content = {
             LazyColumn(horizontalAlignment = Alignment.CenterHorizontally,contentPadding = PaddingValues(bottom = 40.dp)) {
                 items(items){data->
-itemcard(data,navController,scaffold,coroutine,context)
+itemcard(data,navController,scaffold,coroutine,context,viewmodel)
                 }
 
 
@@ -189,7 +191,7 @@ itemcard(data,navController,scaffold,coroutine,context)
 }
 
 @Composable
-fun itemcard(item:allitems,navController: NavController,scaffoldState: ScaffoldState,coroutine:CoroutineScope,context: Context){
+fun itemcard(item:allitems,navController: NavController,scaffoldState: ScaffoldState,coroutine:CoroutineScope,context: Context,viewmodel: Homeview){
     //Surface( modifier = Modifier.fillMaxSize()) {
     Surface(elevation = 10.dp){
         Card(
@@ -220,6 +222,7 @@ fun itemcard(item:allitems,navController: NavController,scaffoldState: ScaffoldS
                                         item.item_name,
                                         Toast.LENGTH_SHORT
                                     ).show()
+                                    viewmodel.additem(item)
                                 }
                             }, modifier = Modifier
                                 .absoluteOffset(x = 66.dp, y = 90.dp)
@@ -260,9 +263,6 @@ fun itemcard(item:allitems,navController: NavController,scaffoldState: ScaffoldS
 fun aftercard(id: Int) {
     Text(text = "$id")
 }
-
-
-
 
 @Composable
 fun itemcard1()
