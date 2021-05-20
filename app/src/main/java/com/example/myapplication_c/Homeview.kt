@@ -23,9 +23,15 @@ fun allitems(){
 }
 
     fun getaddeditems() = repo.getaddeditems()
-
     fun additem(item:allitems) = CoroutineScope(Dispatchers.Main).launch {
         repo.additem(item)
+    }
+    fun update(item: allitems) = CoroutineScope(Dispatchers.Main).launch {
+        repo.updateitem(item)
+    }
+
+    fun delete(item: allitems) = CoroutineScope(Dispatchers.Main).launch {
+        repo.deleteitem(item)
     }
 
 

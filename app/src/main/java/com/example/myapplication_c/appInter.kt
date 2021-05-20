@@ -11,6 +11,7 @@ data class allitems (
     @PrimaryKey val id : Int,
     val item_name :String,
     val price:Int,
+    var quantity:Int = 0
     )
 
 @Dao
@@ -19,8 +20,14 @@ interface dataInter {
     @Query("SELECT * FROM  ALLITEMS")
     fun getaddeditems() : LiveData<List<allitems>>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun additem(item:allitems)
+
+    @Update
+    suspend fun updateitem(item:allitems)
+
+    @Delete
+    suspend fun deleteitem(item: allitems)
 }
 
 interface appInter{
@@ -29,7 +36,7 @@ interface appInter{
 
 
 
-@Database(entities = [allitems::class],version = 1)
+@Database(entities = [allitems::class],version = 2)
 abstract class database:RoomDatabase(){
 
 abstract fun getdao():dataInter

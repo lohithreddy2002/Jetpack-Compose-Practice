@@ -27,4 +27,13 @@ class Repo(val a:database):appInter,dataInter {
         a.getdao().additem(item)
     }
 
+    override suspend fun updateitem(item: allitems) {
+        a.getdao().updateitem(item)
+    }
+
+    override suspend fun deleteitem(item: allitems) {
+
+        a.getdao().deleteitem(item)
+    }
+
 }
